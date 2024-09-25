@@ -5,6 +5,7 @@ import { DemoTabScreenProps } from "../navigators/DemoNavigator"
 import { spacing } from "../theme"
 import { openLinkInBrowser } from "../utils/openLinkInBrowser"
 import { isRTL } from "../i18n"
+import { navigate } from "app/navigators"
 
 const chainReactLogo = require("../../assets/images/demo/cr-logo.png")
 const reactNativeLiveLogo = require("../../assets/images/demo/rnl-logo.png")
@@ -94,7 +95,8 @@ export const DemoCommunityScreen: FC<DemoTabScreenProps<"DemoCommunity">> =
           tx="demoCommunityScreen.hireUsLink"
           leftIcon="clap"
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
-          onPress={() => openLinkInBrowser("https://infinite.red/contact")}
+          // onPress={() => openLinkInBrowser("https://infinite.red/contact")}
+          onPress={() => navigate("Welcome")}
         />
       </Screen>
     )

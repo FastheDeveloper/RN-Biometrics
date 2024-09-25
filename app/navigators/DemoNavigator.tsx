@@ -1,15 +1,15 @@
 import { BottomTabScreenProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { CompositeScreenProps } from "@react-navigation/native"
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { TextStyle, ViewStyle } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { Icon } from "../components"
+import { Icon, Text } from "../components"
 import { translate } from "../i18n"
 import { DemoCommunityScreen, DemoShowroomScreen, DemoDebugScreen } from "../screens"
 import { DemoPodcastListScreen } from "../screens/DemoPodcastListScreen"
 import { colors, spacing, typography } from "../theme"
 import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
-
+import * as LocalAuth from "expo-local-authentication"
 export type DemoTabParamList = {
   DemoCommunity: undefined
   DemoShowroom: { queryIndex?: string; itemIndex?: string }
@@ -38,7 +38,36 @@ const Tab = createBottomTabNavigator<DemoTabParamList>()
  */
 export function DemoNavigator() {
   const { bottom } = useSafeAreaInsets()
+  console.log("protected")
+  const [unlocked, setUnlocked] = useState(false)
+  const authenticate = async () => {
+    const isEnrolled = await LocalAuth.getEnrolledLevelAsync()
+    const supported = await LocalAuth.supportedAuthenticationTypesAsync()
+    const hasHardware = await LocalAuth.hasHardwareAsync()
+    console.log("enrolled", isEnrolled)
+    console.log("supported", supported)
+    console.log("hasHardware", hasHardware)
 
+    const res = await LocalAuth.authenticateAsync()
+    console.log(res)
+    if (res.success) {
+      setUnlocked(true)
+    } else {
+      setUnlocked(false)
+    }
+  }
+
+  useEffect(() => {
+    authenticate()
+  }, [])
+
+  if (!unlocked) {
+    return (
+      <Text style={{ marginTop: 100 }} onPress={authenticate}>
+        Use face ID
+      </Text>
+    )
+  }
   return (
     <Tab.Navigator
       screenOptions={{
